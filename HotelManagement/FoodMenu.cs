@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MetroFramework.Forms;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace Hotel_Manager
 {
-    public partial class FoodMenu : MetroForm
+    public partial class FoodMenu : Form
     {
 
         public FoodMenu()
@@ -21,6 +14,7 @@ namespace Hotel_Manager
 
         private int lunchQ = 0;
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int LunchQ
         {
             get { return lunchQ; }
@@ -28,6 +22,7 @@ namespace Hotel_Manager
         }
         private int breakfastQ = 0;
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int BreakfastQ
         {
             get { return breakfastQ; }
@@ -35,6 +30,7 @@ namespace Hotel_Manager
         }
         private int dinnerQ = 0;
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int DinnerQ
         {
             get { return dinnerQ; }
@@ -43,6 +39,7 @@ namespace Hotel_Manager
 
         private string cleaning= "";
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Cleaning
         {
             get { return cleaning; }
@@ -50,6 +47,7 @@ namespace Hotel_Manager
         }
         private string towel = "";
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Towel
         {
             get { return towel; }
@@ -58,6 +56,7 @@ namespace Hotel_Manager
   
         private string surprise = "";
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Surprise
         {
             get { return surprise; }
@@ -67,54 +66,37 @@ namespace Hotel_Manager
         private void nextButton_Click(object sender, EventArgs e)
         {
             if (breakfastCheckBox.Checked)
-            {
                 BreakfastQ = Convert.ToInt32(breakfastQTY.Text);
-            }
             if (lunchCheckBox.Checked)
-            {
                 LunchQ = Convert.ToInt32(lunchQTY.Text);
-            }
             if (dinnerCheckBox.Checked)
-            {
                 DinnerQ = Convert.ToInt32(dinnerQTY.Text);
-            }
             if (cleaningCheckBox.Checked)
-            {
                 Cleaning = cleaningCheckBox.Text;
-            } if (towelsCheckBox.Checked)
-            {
+            if (towelsCheckBox.Checked)
                 Towel = towelsCheckBox.Text;
-            } 
             if (surpriseCheckBox.Checked)
-            {
                 Surprise = surpriseCheckBox.Text;
-            }
             
-            this.Hide();
+            Hide();
         }
 
         private void breakfastCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (breakfastCheckBox.Checked)
-            {
                 breakfastQTY.Enabled = true;
-            }
         }
 
         private void lunchCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (lunchCheckBox.Checked)
-            {
                 lunchQTY.Enabled = true;
-            }
         }
 
         private void dinnerCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (dinnerCheckBox.Checked)
-            {
                 dinnerQTY.Enabled = true;
-            }
         }    
     }
 }

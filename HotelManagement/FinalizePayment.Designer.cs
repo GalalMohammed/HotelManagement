@@ -1,4 +1,6 @@
-﻿namespace Hotel_Manager
+﻿using System.Windows.Forms;
+
+namespace Hotel_Manager
 {
     partial class FinalizePayment
     {
@@ -28,26 +30,26 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.nextButton = new MetroFramework.Controls.MetroButton();
-            this.reservation = new MetroFramework.Controls.MetroLabel();
-            this.currentBillAmount = new MetroFramework.Controls.MetroLabel();
-            this.priceLabel = new MetroFramework.Controls.MetroLabel();
-            this.currentBill = new MetroFramework.Controls.MetroLabel();
-            this.phoneNComboBox = new MetroFramework.Controls.MetroTextBox();
-            this.paymentLabel = new MetroFramework.Controls.MetroLabel();
-            this.paymentComboBox = new MetroFramework.Controls.MetroComboBox();
-            this.metroLabel5 = new MetroFramework.Controls.MetroLabel();
-            this.taxAmount = new MetroFramework.Controls.MetroLabel();
-            this.totalLabel = new MetroFramework.Controls.MetroLabel();
-            this.totalAmount = new MetroFramework.Controls.MetroLabel();
-            this.monthComboBox = new MetroFramework.Controls.MetroComboBox();
-            this.yearComboBox = new MetroFramework.Controls.MetroComboBox();
-            this.metroLabel10 = new MetroFramework.Controls.MetroLabel();
-            this.cvcComboBox = new MetroFramework.Controls.MetroTextBox();
-            this.cardTypeView = new MetroFramework.Controls.MetroLabel();
-            this.metroLabel12 = new MetroFramework.Controls.MetroLabel();
-            this.foodBillLabel = new MetroFramework.Controls.MetroLabel();
-            this.foodBillAmount = new MetroFramework.Controls.MetroLabel();
+            this.nextButton = new Button();
+            this.reservation = new Label();
+            this.currentBillAmount = new Label();
+            this.priceLabel = new Label();
+            this.currentBill = new Label();
+            this.phoneNComboBox = new TextBox();
+            this.paymentLabel = new Label();
+            this.paymentComboBox = new ComboBox();
+            this.metroLabel5 = new Label();
+            this.taxAmount = new Label();
+            this.totalLabel = new Label();
+            this.totalAmount = new Label();
+            this.monthComboBox = new ComboBox();
+            this.yearComboBox = new ComboBox();
+            this.metroLabel10 = new Label();
+            this.cvcComboBox = new TextBox();
+            this.cardTypeView = new Label();
+            this.metroLabel12 = new Label();
+            this.foodBillLabel = new Label();
+            this.foodBillAmount = new Label();
             this.SuspendLayout();
             // 
             // nextButton
@@ -57,13 +59,11 @@
             this.nextButton.Size = new System.Drawing.Size(88, 34);
             this.nextButton.TabIndex = 0;
             this.nextButton.Text = "Next";
-            this.nextButton.UseSelectable = true;
             this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
             // 
             // reservation
             // 
             this.reservation.AutoSize = true;
-            this.reservation.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.reservation.Location = new System.Drawing.Point(14, 25);
             this.reservation.Name = "reservation";
             this.reservation.Size = new System.Drawing.Size(80, 19);
@@ -73,7 +73,6 @@
             // currentBillAmount
             // 
             this.currentBillAmount.AutoSize = true;
-            this.currentBillAmount.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.currentBillAmount.Location = new System.Drawing.Point(356, 48);
             this.currentBillAmount.Name = "currentBillAmount";
             this.currentBillAmount.Size = new System.Drawing.Size(17, 19);
@@ -84,7 +83,6 @@
             // priceLabel
             // 
             this.priceLabel.AutoSize = true;
-            this.priceLabel.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.priceLabel.Location = new System.Drawing.Point(390, 25);
             this.priceLabel.Name = "priceLabel";
             this.priceLabel.Size = new System.Drawing.Size(38, 19);
@@ -94,7 +92,6 @@
             // currentBill
             // 
             this.currentBill.AutoSize = true;
-            this.currentBill.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.currentBill.Location = new System.Drawing.Point(14, 48);
             this.currentBill.Name = "currentBill";
             this.currentBill.Size = new System.Drawing.Size(77, 19);
@@ -104,34 +101,26 @@
             // phoneNComboBox
             // 
             this.phoneNComboBox.BackColor = System.Drawing.Color.White;
-            this.phoneNComboBox.FontSize = MetroFramework.MetroTextBoxSize.Medium;
             this.phoneNComboBox.Lines = new string[0];
             this.phoneNComboBox.Location = new System.Drawing.Point(161, 159);
             this.phoneNComboBox.MaxLength = 32767;
             this.phoneNComboBox.Name = "phoneNComboBox";
             this.phoneNComboBox.PasswordChar = '\0';
-            this.phoneNComboBox.PromptText = "9999 - 9999 - 9999 - 9999";
             this.phoneNComboBox.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.phoneNComboBox.SelectedText = "";
             this.phoneNComboBox.Size = new System.Drawing.Size(267, 29);
-            this.phoneNComboBox.Style = MetroFramework.MetroColorStyle.White;
             this.phoneNComboBox.TabIndex = 28;
-            this.phoneNComboBox.UseCustomBackColor = true;
-            this.phoneNComboBox.UseSelectable = true;
             this.phoneNComboBox.Leave += new System.EventHandler(this.phoneNComboBox_Leave);
             // 
             // paymentLabel
             // 
             this.paymentLabel.AutoSize = true;
             this.paymentLabel.BackColor = System.Drawing.Color.Transparent;
-            this.paymentLabel.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.paymentLabel.Location = new System.Drawing.Point(14, 137);
             this.paymentLabel.Name = "paymentLabel";
             this.paymentLabel.Size = new System.Drawing.Size(63, 19);
             this.paymentLabel.TabIndex = 25;
             this.paymentLabel.Text = "Payment";
-            this.paymentLabel.UseCustomBackColor = true;
-            this.paymentLabel.UseCustomForeColor = true;
             // 
             // paymentComboBox
             // 
@@ -142,15 +131,12 @@
             "Debit"});
             this.paymentComboBox.Location = new System.Drawing.Point(18, 159);
             this.paymentComboBox.Name = "paymentComboBox";
-            this.paymentComboBox.PromptText = "Payment type";
             this.paymentComboBox.Size = new System.Drawing.Size(128, 29);
             this.paymentComboBox.TabIndex = 29;
-            this.paymentComboBox.UseSelectable = true;
             // 
             // metroLabel5
             // 
             this.metroLabel5.AutoSize = true;
-            this.metroLabel5.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.metroLabel5.Location = new System.Drawing.Point(267, 99);
             this.metroLabel5.Name = "metroLabel5";
             this.metroLabel5.Size = new System.Drawing.Size(29, 19);
@@ -160,7 +146,6 @@
             // taxAmount
             // 
             this.taxAmount.AutoSize = true;
-            this.taxAmount.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.taxAmount.Location = new System.Drawing.Point(343, 99);
             this.taxAmount.Name = "taxAmount";
             this.taxAmount.Size = new System.Drawing.Size(17, 19);
@@ -171,7 +156,6 @@
             // totalLabel
             // 
             this.totalLabel.AutoSize = true;
-            this.totalLabel.FontWeight = MetroFramework.MetroLabelWeight.Bold;
             this.totalLabel.Location = new System.Drawing.Point(245, 127);
             this.totalLabel.Name = "totalLabel";
             this.totalLabel.Size = new System.Drawing.Size(42, 19);
@@ -181,7 +165,6 @@
             // totalAmount
             // 
             this.totalAmount.AutoSize = true;
-            this.totalAmount.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.totalAmount.Location = new System.Drawing.Point(334, 127);
             this.totalAmount.Name = "totalAmount";
             this.totalAmount.Size = new System.Drawing.Size(17, 19);
@@ -208,10 +191,8 @@
             "12"});
             this.monthComboBox.Location = new System.Drawing.Point(18, 200);
             this.monthComboBox.Name = "monthComboBox";
-            this.monthComboBox.PromptText = "MM";
             this.monthComboBox.Size = new System.Drawing.Size(59, 29);
             this.monthComboBox.TabIndex = 34;
-            this.monthComboBox.UseSelectable = true;
             this.monthComboBox.SelectedIndexChanged += new System.EventHandler(this.monthComboBox_SelectedIndexChanged);
             // 
             // yearComboBox
@@ -232,15 +213,12 @@
             "24"});
             this.yearComboBox.Location = new System.Drawing.Point(101, 201);
             this.yearComboBox.Name = "yearComboBox";
-            this.yearComboBox.PromptText = "YY";
             this.yearComboBox.Size = new System.Drawing.Size(45, 29);
             this.yearComboBox.TabIndex = 35;
-            this.yearComboBox.UseSelectable = true;
             // 
             // metroLabel10
             // 
             this.metroLabel10.AutoSize = true;
-            this.metroLabel10.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.metroLabel10.Location = new System.Drawing.Point(83, 205);
             this.metroLabel10.Name = "metroLabel10";
             this.metroLabel10.Size = new System.Drawing.Size(14, 19);
@@ -250,25 +228,19 @@
             // cvcComboBox
             // 
             this.cvcComboBox.BackColor = System.Drawing.Color.White;
-            this.cvcComboBox.FontSize = MetroFramework.MetroTextBoxSize.Medium;
             this.cvcComboBox.Lines = new string[0];
             this.cvcComboBox.Location = new System.Drawing.Point(161, 201);
             this.cvcComboBox.MaxLength = 32767;
             this.cvcComboBox.Name = "cvcComboBox";
             this.cvcComboBox.PasswordChar = '\0';
-            this.cvcComboBox.PromptText = "CVC";
             this.cvcComboBox.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.cvcComboBox.SelectedText = "";
             this.cvcComboBox.Size = new System.Drawing.Size(41, 29);
-            this.cvcComboBox.Style = MetroFramework.MetroColorStyle.White;
             this.cvcComboBox.TabIndex = 37;
-            this.cvcComboBox.UseCustomBackColor = true;
-            this.cvcComboBox.UseSelectable = true;
             // 
             // cardTypeView
             // 
             this.cardTypeView.AutoSize = true;
-            this.cardTypeView.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.cardTypeView.Location = new System.Drawing.Point(296, 208);
             this.cardTypeView.Name = "cardTypeView";
             this.cardTypeView.Size = new System.Drawing.Size(68, 19);
@@ -278,7 +250,6 @@
             // metroLabel12
             // 
             this.metroLabel12.AutoSize = true;
-            this.metroLabel12.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.metroLabel12.Location = new System.Drawing.Point(215, 207);
             this.metroLabel12.Name = "metroLabel12";
             this.metroLabel12.Size = new System.Drawing.Size(76, 19);
@@ -288,7 +259,6 @@
             // foodBillLabel
             // 
             this.foodBillLabel.AutoSize = true;
-            this.foodBillLabel.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.foodBillLabel.Location = new System.Drawing.Point(14, 72);
             this.foodBillLabel.Name = "foodBillLabel";
             this.foodBillLabel.Size = new System.Drawing.Size(61, 19);
@@ -298,7 +268,6 @@
             // foodBillAmount
             // 
             this.foodBillAmount.AutoSize = true;
-            this.foodBillAmount.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.foodBillAmount.Location = new System.Drawing.Point(356, 72);
             this.foodBillAmount.Name = "foodBillAmount";
             this.foodBillAmount.Size = new System.Drawing.Size(17, 19);
@@ -310,7 +279,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.ClientSize = new System.Drawing.Size(434, 284);
             this.Controls.Add(this.foodBillAmount);
             this.Controls.Add(this.foodBillLabel);
@@ -332,15 +301,12 @@
             this.Controls.Add(this.reservation);
             this.Controls.Add(this.paymentLabel);
             this.Controls.Add(this.nextButton);
-            this.DisplayHeader = false;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FinalizePayment";
             this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
-            this.Resizable = false;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.Style = MetroFramework.MetroColorStyle.Green;
             this.Load += new System.EventHandler(this.FinalizePayment_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -349,26 +315,26 @@
 
         #endregion
 
-        private MetroFramework.Controls.MetroButton nextButton;
-        private MetroFramework.Controls.MetroLabel reservation;
-        private MetroFramework.Controls.MetroLabel currentBillAmount;
-        private MetroFramework.Controls.MetroLabel priceLabel;
-        private MetroFramework.Controls.MetroLabel currentBill;
-        private MetroFramework.Controls.MetroLabel paymentLabel;
-        private MetroFramework.Controls.MetroLabel metroLabel5;
-        private MetroFramework.Controls.MetroLabel taxAmount;
-        private MetroFramework.Controls.MetroLabel totalLabel;
-        private MetroFramework.Controls.MetroLabel totalAmount;
-        private MetroFramework.Controls.MetroLabel metroLabel10;
-        private MetroFramework.Controls.MetroLabel cardTypeView;
-        private MetroFramework.Controls.MetroLabel metroLabel12;
-        public MetroFramework.Controls.MetroTextBox phoneNComboBox;
-        public MetroFramework.Controls.MetroComboBox paymentComboBox;
-        public MetroFramework.Controls.MetroComboBox monthComboBox;
-        public MetroFramework.Controls.MetroComboBox yearComboBox;
-        public MetroFramework.Controls.MetroTextBox cvcComboBox;
-        private MetroFramework.Controls.MetroLabel foodBillLabel;
-        private MetroFramework.Controls.MetroLabel foodBillAmount;
+        private Button nextButton;
+        private Label reservation;
+        private Label currentBillAmount;
+        private Label priceLabel;
+        private Label currentBill;
+        private Label paymentLabel;
+        private Label metroLabel5;
+        private Label taxAmount;
+        private Label totalLabel;
+        private Label totalAmount;
+        private Label metroLabel10;
+        private Label cardTypeView;
+        private Label metroLabel12;
+        public TextBox phoneNComboBox;
+        public ComboBox paymentComboBox;
+        public ComboBox monthComboBox;
+        public ComboBox yearComboBox;
+        public TextBox cvcComboBox;
+        private Label foodBillLabel;
+        private Label foodBillAmount;
 
     }
 }

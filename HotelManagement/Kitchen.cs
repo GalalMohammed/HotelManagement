@@ -1,30 +1,23 @@
-﻿using MetroFramework.Forms;
-using MetroFramework.Fonts;
-using MetroFramework.Drawing;
+﻿using Hotel_Manager.FRONTEND_RESERVATIONModels;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System.Configuration;
 using System.Data;
-using System.Drawing;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SqlClient;
 namespace Hotel_Manager
 {
-    public partial class Kitchen : MetroForm
+    public partial class Kitchen : Form
     {
-        string cleaning, towel, surprise, queryString;
+        string? cleaning, towel, surprise, queryString;
         int breakfast, lunch, dinner, foodBill;
-        public Int32 primaryID;
+        public int primaryID;
         double totalBill;
         bool supply_status = false;
 
-        SqlConnection connection = new SqlConnection(Hotel_Manager.Properties.Settings.Default.frontend_reservationConnectionString);
-        SqlCommand query;
-        SqlDataReader reader;
-        
+        readonly FRONTEND_RESERVATIONContext fRONTEND_RESERVATIONContext = new(new DbContextOptionsBuilder<FRONTEND_RESERVATIONContext>().UseSqlServer(ConfigurationManager.ConnectionStrings["Hotel_Manager.Properties.Settings.frontend_reservationConnectionString"].ConnectionString).Options);
         public Kitchen()
         {
             InitializeComponent();
@@ -34,37 +27,47 @@ namespace Hotel_Manager
         {
             LoadForDataGridView();
             listBoxFromDataBase();
+            FormClosing += (sender, e) =>
+            {
+                fRONTEND_RESERVATIONContext.Dispose();
+                Application.Exit();
+            };
         }
 
         private void LoadForDataGridView()
         {
-            if (connection.State != ConnectionState.Open)
+            try
             {
-                connection.Close();
-
-                queryString = "Select ID, first_name, last_name, phone_number, room_type, room_floor, room_number, break_fast, lunch, dinner, cleaning, towel, s_surprise, supply_status, food_bill from reservation where check_in = '" + "True" + "' AND supply_status= '" + "False" + "'";
-                query = new SqlCommand(queryString, connection);
-                try
+                BindingSource bindingSource = new()
                 {
-                    connection.Open();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter(query);
-                    DataTable dataTable = new DataTable();
-                    dataAdapter.Fill(dataTable);
-
-                    BindingSource bindingSource = new BindingSource();
-                    bindingSource.DataSource = dataTable;
-                    overviewDataGridView.DataSource = bindingSource;
-                    dataAdapter.Update(dataTable);
-                    connection.Close();
-                }
-                catch (Exception)
-                {
-                    MetroFramework.MetroMessageBox.Show(this, "Error loading data", "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.None);
-                }
+                    DataSource = fRONTEND_RESERVATIONContext.Reservations.Where(r => r.CheckIn == true && r.SupplyStatus == false).Select(Select => new
+                    {
+                        Select.Id,
+                        Select.FirstName,
+                        Select.LastName,
+                        Select.PhoneNumber,
+                        Select.RoomType,
+                        Select.RoomFloor,
+                        Select.RoomNumber,
+                        Select.BreakFast,
+                        Select.Lunch,
+                        Select.Dinner,
+                        Select.Cleaning,
+                        Select.Towel,
+                        Select.SSurprise,
+                        Select.SupplyStatus,
+                        Select.FoodBill
+                    }).ToList()
+                };
+                overviewDataGridView.DataSource = bindingSource;
             }
-            else
+            catch (Exception ex)
             {
-                MetroFramework.MetroMessageBox.Show(this, "SQL Connection is already open", "ERROR", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
+                Trace.WriteLine(ex.Message);
+                if (MessageBox.Show(this, "Error loading data", "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.None) == DialogResult.Retry)
+                    LoadForDataGridView();
+                else
+                    Application.Exit();
             }
         }
 
@@ -72,251 +75,127 @@ namespace Hotel_Manager
         {
             foreach (Control control in controls.Controls)
             {
-                if (control is TextBox)
-                {
-                    ((TextBox)control).Clear();
-                }
+                if (control is TextBox box)
+                    box.Clear();
                 if (control.HasChildren)
-                {
                     resetEntries(control);
-                }
             }
 
         }
         private void listBoxFromDataBase()
         {
-
             queueListBox.Items.Clear();
-            if (connection.State != ConnectionState.Open)
+            try
             {
-                connection.Close();
-
-                queryString = "Select * from reservation where check_in = '" + "True" + "' AND supply_status='" + "False" + "'";
-
-                query = new SqlCommand(queryString, connection);
-                try
-                {
-                    connection.Open();
-                    reader = query.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        string ID = reader["ID"].ToString();
-                        string first_name = reader["first_name"].ToString();
-                        string last_name = reader["last_name"].ToString();
-                        string phone_number = reader["phone_number"].ToString();
-                        queueListBox.Items.Add(ID + "  | " + first_name + "  " + last_name + " | " + phone_number);
-
-                    }
-                    connection.Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                foreach (var item in fRONTEND_RESERVATIONContext.Reservations.Where(r => r.CheckIn == true && r.SupplyStatus == false))
+                    queueListBox.Items.Add(item.Id + "  | " + item.FirstName + "  " + item.LastName + " | " + item.PhoneNumber);
             }
-            else
+            catch (Exception ex)
             {
-                MetroFramework.MetroMessageBox.Show(this, "SQL Connection is already open", "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
+                MessageBox.Show("LISTBOX: + " + ex.Message);
             }
         }
 
         private void queueListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (connection.State != ConnectionState.Open)
+            resetEntries(this);
+            string getQuerystring = queueListBox.Text[..4].Replace(" ", string.Empty);
+            queryString = "Select * from reservation where Id= '" + getQuerystring + "'";
+            try
             {
-                connection.Close();
-                resetEntries(this);
-                string getQuerystring = queueListBox.Text.Substring(0, 4).Replace(" ", string.Empty);
-                //MessageBox.Show("ID+" + getQuerystring);
-                queryString = "Select * from reservation where Id= '" + getQuerystring + "'";
-                
-                query = new SqlCommand(queryString, connection);
-                try
-                {
-                    connection.Open();
-                    reader = query.ExecuteReader();
-                    while (reader.Read())
+                Reservation? reservation = fRONTEND_RESERVATIONContext.Reservations.Find(Convert.ToInt32(getQuerystring));
+                if (reservation != null) {
+                    if (reservation.Cleaning)
                     {
-                        string ID = reader["Id"].ToString();
-                        string first_name = reader["first_name"].ToString();
-                        string last_name = reader["last_name"].ToString();
-                        string phone_number = reader["phone_number"].ToString();
-                        string foodBillD = reader["food_bill"].ToString();
-                        string total_bill = reader["total_bill"].ToString().Replace(" ", string.Empty);
-                        string room_type = reader["room_type"].ToString();
-                        string room_floor = reader["room_floor"].ToString();
-                        string room_number = reader["room_number"].ToString();
-
-                        string _cleaning = reader["cleaning"].ToString();
-                        string _towel = reader["towel"].ToString();
-                        string _surprise = reader["s_surprise"].ToString();
-
-
-
-                        if (_cleaning == "True")
-                        {
-                            cleaning = "1";
-                            cleaningCheckBox.Checked = true;
-                        }
-                        else { cleaning = "0"; }
-
-                        if (_towel == "True")
-                        {
-                            towel = "1";
-                            towelCheckBox.Checked = true;
-                        }
-                        else { towel = "0"; }
-                        if (_surprise == "True")
-                        {
-                            surprise = "1";
-                            surpriseCheckBox.Checked = true;
-                        }
-                        else
-                        {
-                            surprise = "0";
-                        }
-
-                        string supply_status = reader["supply_status"].ToString();
-                        string food_billD = reader["food_bill"].ToString();
-
-                        string _breakfast = reader["break_fast"].ToString();
-                        string _lunch = reader["lunch"].ToString();
-                        string _dinner = reader["dinner"].ToString();
-
-                        double Num;
-                        bool isNum = double.TryParse(_lunch, out Num);
-                        if (isNum)
-                        {
-                            lunch = Int32.Parse(_lunch);
-                            lunchTextBox.Text = Convert.ToString(lunch);
-                        }
-                        else
-                        {
-                            lunch = 0;
-                            lunchTextBox.Text = "NONE";
-                        }
-                        isNum = double.TryParse(_breakfast, out Num);
-                        if (isNum)
-                        {
-                            breakfast = Int32.Parse(_breakfast);
-                            breakfastTextBox.Text = Convert.ToString(breakfast);
-                        }
-                        else
-                        {
-                            breakfast = 0;
-                            breakfastTextBox.Text = "NONE";
-                        }
-                        isNum = double.TryParse(_dinner, out Num);
-                        if (isNum)
-                        {
-                            dinner = Int32.Parse(_dinner);
-                            dinnerTextBox.Text = Convert.ToString(dinner);
-                        }
-                        else
-                        {
-                            dinner = 0;
-                            dinnerTextBox.Text = "NONE";
-                        }
-
-                        if (supply_status == "True")
-                        {
-                            supplyCheckBox.Checked = true;
-                        }
-                        else
-                        {
-                            supplyCheckBox.Checked = false;
-                        }
-
-                        firstNameTextBox.Text = first_name;
-                        lastNameTextBox.Text = last_name;
-                        phoneNTextBox.Text = phone_number;
-                        roomTypeTextBox.Text = room_type;
-                        floorNTextBox.Text = room_floor;
-                        roomNTextBox.Text = room_number;
-                        totalBill = Convert.ToDouble(total_bill);
-                        foodBill = Convert.ToInt32(foodBillD);
-                        totalBill -= foodBill;
-                        primaryID = Convert.ToInt32(ID);
-
+                        cleaning = "1";
+                        cleaningCheckBox.Checked = true;
                     }
-                    connection.Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("COMBOBOX Selection: + " + ex.Message);
+                    else cleaning = "0";
+                    if (reservation.Towel)
+                    {
+                        towel = "1";
+                        towelCheckBox.Checked = true;
+                    }
+                    else towel = "0";
+                    if (reservation.SSurprise)
+                    {
+                        surprise = "1";
+                        surpriseCheckBox.Checked = true;
+                    }
+                    else surprise = "0";
+                    lunchTextBox.Text = Convert.ToString(reservation.Lunch);
+                    breakfastTextBox.Text = Convert.ToString(reservation.BreakFast);
+                    dinnerTextBox.Text = Convert.ToString(reservation.Dinner);
+                    supplyCheckBox.Checked = reservation.SupplyStatus;
+                    firstNameTextBox.Text = reservation.FirstName;
+                    lastNameTextBox.Text = reservation.LastName;
+                    phoneNTextBox.Text = reservation.PhoneNumber;
+                    roomTypeTextBox.Text = reservation.RoomType;
+                    floorNTextBox.Text = reservation.RoomFloor;
+                    roomNTextBox.Text = reservation.RoomNumber;
+                    totalBill = reservation.TotalBill;
+                    foodBill = reservation.FoodBill;
+                    totalBill -= foodBill;
+                    primaryID = reservation.Id;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                MetroFramework.MetroMessageBox.Show(this, "SQL Connection is already open.", "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
+                MessageBox.Show("COMBOBOX Selection: + " + ex.Message);
             }
         }
 
         private void foodSelectionButton_Click(object sender, EventArgs e)
         {
-
-            FoodMenu food_menu = new FoodMenu();
+            FoodMenu food_menu = new();
             food_menu.needPanel.Visible = false;
-
             food_menu.ShowDialog();
-
             breakfast = food_menu.BreakfastQ;
             lunch = food_menu.LunchQ;
             dinner = food_menu.DinnerQ;
-
             int bfast= 0, Lnch= 0, di_ner = 0;
             if (breakfast > 0)
-            {
                 bfast = 7 * breakfast;
-            } if (lunch > 0)
-            {
+            if (lunch > 0)
                 Lnch = 15 * lunch;
-            } if (dinner > 0)
-            {
+            if (dinner > 0)
                 di_ner = 15 * dinner;
-            }
             foodBill += (bfast + Lnch + di_ner);
         }
 
         private void updateButton_Click(object sender, EventArgs e)
         {
-            if (connection.State != ConnectionState.Open)
+            if (primaryID > 1000)
             {
-                connection.Close();
-
-                if (primaryID > 1000)
+                try
                 {
-                    queryString = "update reservation set total_bill='" + totalBill + foodBill + "', break_fast='" + breakfast + "', lunch= '" + lunch + "', dinner='" + dinner + "', supply_status='" + supply_status + "',cleaning='" + Convert.ToInt32(cleaning) + "',towel='" + Convert.ToInt32(towel) + "',s_surprise='" + Convert.ToInt32(surprise) + "',food_bill='" + foodBill + "' WHERE Id = '" + primaryID + "';";
-
-                    query = new SqlCommand(queryString, connection);
-                    try
+                    Reservation? reservation = fRONTEND_RESERVATIONContext.Reservations.Find(primaryID);
+                    if (reservation != null)
                     {
-                        connection.Open();
-                        string userID = Convert.ToString(primaryID);
-                        reader = query.ExecuteReader();
-
-                        MetroFramework.MetroMessageBox.Show(this, "Entry successfully updated into database. For the UNIQUE USER ID of: " + "\n\n" +
-                        " " + userID, "Report", MessageBoxButtons.OK, MessageBoxIcon.Question);
-
-                        connection.Close();
+                        reservation.TotalBill = totalBill + foodBill;
+                        reservation.BreakFast = breakfast;
+                        reservation.Lunch = lunch;
+                        reservation.Dinner = dinner;
+                        reservation.SupplyStatus = supply_status;
+                        reservation.Cleaning = cleaning == "1";
+                        reservation.Towel = towel == "1";
+                        reservation.SSurprise = surprise == "1";
+                        reservation.FoodBill = foodBill;
+                        fRONTEND_RESERVATIONContext.SaveChanges();
+                        MessageBox.Show(this, "Entry successfully updated into database. For the UNIQUE USER ID of: " + "\n\n" +
+                        " " + primaryID, "Report", MessageBoxButtons.OK, MessageBoxIcon.Question);
                         listBoxFromDataBase();
                         LoadForDataGridView();
                         resetEntries(this);
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MetroFramework.MetroMessageBox.Show(this, "Selected ID doesn't exist.", "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
+                    MessageBox.Show(this, "Error updating data. " + ex.Message, "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
                 }
             }
             else
-            {
-                MetroFramework.MetroMessageBox.Show(this, "SQL Connection is already open.", "ERROR", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
-            }
+                MessageBox.Show(this, "Selected ID doesn't exist.", "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
         }
 
         private void supplyCheckBox_CheckedChanged(object sender, EventArgs e)

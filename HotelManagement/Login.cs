@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using Hotel_Manager.LOGIN_MANAGERModels;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MetroFramework.Forms;
-using MetroFramework.Controls;
-using MetroFramework.Drawing;
-using System.Drawing;
 using System.Windows.Forms;
-using System.Data.SqlClient;
 
 namespace Hotel_Manager
 {
-    public partial class Login : MetroForm
+    public partial class Login : Form
     {
         public Login()
         {
@@ -27,24 +21,31 @@ namespace Hotel_Manager
             {
                 if (verifier("frontend".Trim(), usernameTextBox.Text.Trim(), passwordTextBox.Text.Trim()))
                 {
-                    this.Hide();
-                    Frontend hotel_management = new Frontend();
+                    Hide();
+                    Frontend hotel_management = new();
                     hotel_management.Show();
                 }
                 else if (verifier("kitchen".Trim(), usernameTextBox.Text.Trim(), passwordTextBox.Text.Trim()))
                 {
-                    this.Hide();
-                    Kitchen kitchen_management = new Kitchen();
+                    Hide();
+                    Kitchen kitchen_management = new();
                     kitchen_management.Show();
                 }
                 else
                 {
-                    MetroFramework.MetroMessageBox.Show(this, "Username or Password is wrong, try again", "Login Failed", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                    DialogResult res = MessageBox.Show(this, "Username or Password is wrong, try again", "Login Failed", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    if (res == DialogResult.Cancel)
+                        Application.Exit();
                 }
             }
             catch (Exception ex)
             {
-                MetroFramework.MetroMessageBox.Show(this, ex.ToString(), "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                Trace.WriteLine(ex.ToString());
+                DialogResult res = MessageBox.Show(this, "An error occurred, try again", "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                if (res == DialogResult.Cancel)
+                    Application.Exit();
+                else
+                    Application.Restart();
             }
         }
 
@@ -52,25 +53,17 @@ namespace Hotel_Manager
         {
 
             if (usernameTextBox.Text == string.Empty)
-            {
                 usernameLabel.Visible = true;
-            }
             if (usernameTextBox.Text != "Username" && usernameTextBox.Text != string.Empty)
-            {
                 usernameLabel.Visible = false;
-            }
         }
         private void passwordTextBox_Click(object sender, EventArgs e)
         {
 
             if (passwordTextBox.Text == string.Empty)
-            {
                 passwordLabel.Visible = true;
-            }
             if (passwordTextBox.Text != "Password" && passwordTextBox.Text != string.Empty)
-            {
                 passwordLabel.Visible = false;
-            }
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -90,28 +83,34 @@ namespace Hotel_Manager
         public bool verifier(string tableName, string username, string password)
         {
             bool success = false;
-            SqlConnection connection = new SqlConnection(Hotel_Manager.Properties.Settings.Default.loginConnectionString);
-            string sql = "SELECT* FROM "  +tableName+ " WHERE user_name=@userName AND pass_word=@password";
+            LOGIN_MANAGERContext login_Manager = new(new DbContextOptionsBuilder<LOGIN_MANAGERContext>().UseSqlServer(ConfigurationManager.ConnectionStrings["Hotel_Manager.Properties.Settings.loginConnectionString"].ConnectionString).Options);
             try
             {
-                SqlCommand sqlCommand = new SqlCommand(sql, connection);
-                sqlCommand.CommandText = sql;
-                SqlParameter UsernameParametar = new SqlParameter("@username", SqlDbType.VarChar);
-                SqlParameter PassParametar = new SqlParameter("@password", SqlDbType.VarChar);
-                sqlCommand.Parameters.Add(UsernameParametar);
-                sqlCommand.Parameters.Add(PassParametar);
-                UsernameParametar.Value = username;
-                PassParametar.Value = password;
-                connection.Open();
-                SqlDataReader sqlReader = sqlCommand.ExecuteReader();
-
-                if (sqlReader.HasRows)
-                    success = true;
-                connection.Close();
+                if (tableName == "frontend")
+                {
+                    var user = login_Manager.Frontends.AsNoTracking().FirstOrDefault(user => user.UserName == username && user.PassWord == password);
+                    if (user != null)
+                        success = true;
+                }
+                else if (tableName == "kitchen")
+                {
+                    var user = login_Manager.Kitchens.AsNoTracking().FirstOrDefault(user => user.UserName == username && user.PassWord == password);
+                    if (user != null)
+                        success = true;
+                }
             }
             catch (Exception e)
             {
-                MetroFramework.MetroMessageBox.Show(this, e.ToString(), "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                Trace.WriteLine(e.ToString());
+                DialogResult res = MessageBox.Show(this, "An error occurred, try again", "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                if (res == DialogResult.Cancel)
+                    Application.Exit();
+                else
+                    Application.Restart();
+            }
+            finally
+            {
+                login_Manager.Dispose();
             }
             return success;
         }
@@ -123,7 +122,7 @@ namespace Hotel_Manager
 
         private void LicenseCallButton_Click(object sender, EventArgs e)
         {
-            License open_license = new License();
+            License open_license = new();
             open_license.ShowDialog();
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace Hotel_Manager
+﻿using System.Windows.Forms;
+
+namespace Hotel_Manager
 {
     partial class License
     {
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(License));
-            this.LicenseText = new MetroFramework.Controls.MetroLabel();
+            this.LicenseText = new Label();
             this.SuspendLayout();
             // 
             // LicenseText
@@ -50,8 +52,6 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "License";
-            this.Resizable = false;
-            this.Style = MetroFramework.MetroColorStyle.Teal;
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -59,6 +59,6 @@
 
         #endregion
 
-        private MetroFramework.Controls.MetroLabel LicenseText;
+        private Label LicenseText;
     }
 }
